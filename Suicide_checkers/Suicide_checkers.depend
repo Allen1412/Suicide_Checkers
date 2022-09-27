@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1664268568 source:c:\users\phetolo\desktop\eie_2022\software_tender_git\suicide_checkers\main.cpp
+	<iostream>
+	"Board.h"
+
+1664229276 c:\users\phetolo\desktop\eie_2022\software_tender_git\suicide_checkers\include\board.h
+	<vector>
+	<iostream>
+	<iostream>
+
+1664268122 source:c:\users\phetolo\desktop\eie_2022\software_tender_git\suicide_checkers\src\board.cpp
+	"Board.h"
+

@@ -11,7 +11,6 @@ Board::Board(int sz)
         board_size = sz;
     }
 
-    initialize_board();
 }
 
 Board::~Board()
@@ -19,7 +18,7 @@ Board::~Board()
     //dtor
 }
 
-void Board::initialize_board(){
+void Board::initialize_board(vector <vector <char>> &board){
 
     // The number of rows a player must occupy is board size divided by 2 minus 1
     int player_rows = (board_size / 2) -1;
@@ -49,7 +48,7 @@ for (int i = 0; i < board_size; i++){
 
 }
 
-void Board::print_board(){
+void Board::print_board(vector <vector <char>> &board){
 
     for (int i = 0; i< board_size; i++){
         for (int j = 0; j< board_size; j++){

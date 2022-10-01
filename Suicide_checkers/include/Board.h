@@ -13,14 +13,14 @@ class Board
         Board();
         Board(int sz);
         ~Board();
-        void print_board();
+        void print_board(vector <vector <char>>&);
+        void initialize_board(vector <vector <char>>&);
 
     protected:
 
     private:
-        vector <vector <char>> board;
         int board_size;
-        void initialize_board();
+
 };
 
 #endif // BOARD_H

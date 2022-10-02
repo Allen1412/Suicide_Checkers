@@ -1,9 +1,11 @@
+// <2462667>
+
+
+/// This class initialises the board,
 #ifndef BOARD_H
 #define BOARD_H
 #include <vector> // This allows us to use vectors, since the board is a 2D vector.
-#include <iostream>
-
-#include <iostream>
+#include <iostream> /**************REMOVE*****************/
 
 using namespace std;
 
@@ -11,15 +13,19 @@ class Board
 {
     public:
         Board();
-        Board(int sz);
+        Board(int, int&, int&);// To initialise any possible variables
         ~Board();
-        void print_board(vector <vector <char>>&);
+        void print_board(vector <vector <char>>&);/****REMOVE***/
         void initialize_board(vector <vector <char>>&);
+        int game_finished_state();// Returns the game_finished value for a draw, win or continuing state
+        void update_game(int game_finished)// updates game_finished_value
 
     protected:
 
     private:
         int board_size;
+        int game_finished_value;/// 0 when the game is playing, 1 if player1 wins, 2 if player2 wins, and 3 for a draw
+
 
 };
 

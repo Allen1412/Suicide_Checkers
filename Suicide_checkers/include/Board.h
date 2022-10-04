@@ -18,7 +18,7 @@ class Board
         void print_board(vector <vector <char>>&);/****REMOVE***/
         void initialize_board(vector <vector <char>>&);
         int game_finished_state();// Returns the game_finished value for a draw, win or continuing state
-        void update_game(int game_finished)// updates game_finished_value
+        void update_game(int game_finished);// updates game_finished_value
 
     protected:
 

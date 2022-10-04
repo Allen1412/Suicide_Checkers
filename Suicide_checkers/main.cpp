@@ -9,6 +9,7 @@ using namespace std;
 void algorithm1(vector <vector<char>>& board, Board bd, Rules rules, int& player1, int& player2);
 void algorithm2(vector <vector<char>>& board, Board bd, Rules rules, int& player1, int& player2);
 bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd, Rules rules, int& player1, int& player2);
+void make_update(vector <vector<char>>& board, Board& bd, Rules& rules, int player1, int player2);
 
 int main()
 {
@@ -24,10 +25,19 @@ int main()
 
     while (bd.game_finished_state() == 0){
 
-        if (i%2 == 0)
+        //play in alternating turns
+        if (i%2 == 0){
             algorithm1(board, bd, rules, player1, player2);
-        else
+            make_update(board, bd, rules, player1, player2);
+
+            }
+        else{
             algorithm2(board, bd, rules, player1, player2);
+            make_update(board, bd, rules, player1, player2);
+
+            }
+
+            cout << "we done yet? :" << bd.game_finished_state() << endl;
 
         if (bd.game_finished_state() == 1)
        {
@@ -123,11 +133,6 @@ bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd
             if(board[i][j] == plyr || board[i][j] == plyr_king){
                     int a = i, b =j, jumps = 0;
                     while(rules.is_jumping(a,b,board,player1,player2)){
-                        if(player1 == 0)
-                            bd.update_game(1);
-
-                        else if(player2 == 0)
-                            bd.update_game(2);
 
                         if(rules.is_on_boundaries(a,b,board))
                             rules.make_king(a,b,board);
@@ -147,4 +152,13 @@ bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd
     return false;
 }
 
+
+void make_update(vector <vector<char>>& board, Board& bd, Rules& rules, int player1, int player2){
+
+    if(player1 == 0)
+        bd.update_game(1);
+    else if(player2 == 0)
+        bd.update_game(2);
+
+}
 

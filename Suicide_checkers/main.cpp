@@ -1,6 +1,5 @@
 // <2462667>
 
-#include <iostream>
 #include "Board.h"
 #include "Rules.h"
 #include <cmath>
@@ -10,16 +9,18 @@
 using namespace std;
 
 // Random algorithm
-void algorithm1(vector <vector<char>>& board, Board& bd, Rules rules, int& player1, int& player2);
+void algorithm1(vector <vector<char>>& board, Board& bd, Rules rules, int& player1, int& player2, ofstream& output);
 //Non-random algorithm
-void algorithm2(vector <vector<char>>& board, Board& bd, Rules rules, int& player1, int& player2);
+void algorithm2(vector <vector<char>>& board, Board& bd, Rules rules, int& player1, int& player2, ofstream& output);
 // Function that forces a jump
-bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd, Rules rules, int& player1, int& player2);
+bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd, Rules rules, int& player1, int& player2, ofstream& output);
 //Function that updates game variables
 void make_update(vector <vector<char>>& board, Board& bd, Rules& rules, int player1, int player2);
 //Function to find playable positions for either algorithm indicated by the character o for algorithm 1 and x for algorithm 2
 void find_playable_positions(vector<vector<char>>&, Rules rules, char alg, vector <int>&, vector <int>&, vector <int>&, vector <int>&, vector <int>&, vector <int>&);
 void fill_positions(int i, int j, int i_, int j_, int initial,int destination ,vector <int>&, vector <int>&, vector <int>&, vector <int>&, vector <int>&, vector <int>&);
+
+
 
 
 
@@ -32,63 +33,74 @@ int main()
     // Important coordinates tables
     int sz , player1, player2, counter;
 
+    // board sizes will be read from a text file called input.txt
+    ifstream input("input.txt");
+
+    ofstream output("output.txt");
 
 
-    while (cin >> sz){
+    if(input.is_open()){
 
 
-    Board bd (sz, player1, player2);
-    Rules rules;
-    counter = 0;
-    bd.initialize_board(board);
+                            while (input >> sz){
 
-     while (bd.game_finished_state() == 0){
+                            output << sz << endl;
+                            Board bd (sz, player1, player2);
+                            Rules rules;
+                            counter = 0;
+                            bd.initialize_board(board);
 
-        //play in alternating turns
-        if (counter %2 == 0){
-            algorithm1(board, bd, rules, player1, player2);
-            make_update(board, bd, rules, player1, player2);
+                             while (bd.game_finished_state() == 0){
 
-            }
-        else{
-            algorithm2(board, bd, rules, player1, player2);
-            make_update(board, bd, rules, player1, player2);
+                                //play in alternating turns
+                                if (counter %2 == 0){
+                                    algorithm1(board, bd, rules, player1, player2, output);
+                                    make_update(board, bd, rules, player1, player2);
 
-            }
+                                    }
+                                else{
+                                    algorithm2(board, bd, rules, player1, player2, output);
+                                    make_update(board, bd, rules, player1, player2);
 
-        if (bd.game_finished_state() == 1)
-        {
-           cout << "tp1 " << player1 << endl;
-           cout << "tp2 " << player2 <<endl;
-           cout << "wp1" << endl << endl;
-           board.clear();
-           break;
-        }
-        else if(bd.game_finished_state() == 2)
-        {
-           cout << "tp1 " << player1 << endl;
-           cout << "tp2 " << player2 <<endl;
-           cout << "wp2" << endl << endl;
-           board.clear();
-           break;
-        }
-        else if (bd.game_finished_state() == 3){
+                                    }
 
-           cout << "tp1 " << player1 << endl;
-           cout << "tp2 " << player2 <<endl;
-           cout << "d" << endl << endl;
-           board.clear();
-           break;
-        }
+                                if (bd.game_finished_state() == 1)
+                                {
+                                   output << "tp1 " << player1 << endl;
+                                   output << "tp2 " << player2 <<endl;
+                                   output << "wp1" << endl << endl;
+                                   board.clear();
+                                   break;
+                                }
+                                else if(bd.game_finished_state() == 2)
+                                {
+                                   output << "tp1 " << player1 << endl;
+                                   output << "tp2 " << player2 <<endl;
+                                   output << "wp2" << endl << endl;
+                                   board.clear();
+                                   break;
+                                }
+                                else if (bd.game_finished_state() == 3){
 
-        counter++;
+                                   output << "tp1 " << player1 << endl;
+                                   output << "tp2 " << player2 <<endl;
+                                   output << "d" << endl << endl;
+                                   board.clear();
+                                   break;
+                                }
+
+                                counter++;
+                            }
+
+
+
+                            }
+
+       // Safely closing files
+        input.close();
+        output.close();
+
     }
-
-
-
-    }
-
-
 
     return 0;
 }
@@ -110,14 +122,14 @@ int main()
 
 
 
-void algorithm1(vector <vector<char>>& board, Board& bd, Rules rules, int& player1, int& player2){
+void algorithm1(vector <vector<char>>& board, Board& bd, Rules rules, int& player1, int& player2, ofstream& output){
 
     vector <int> initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination;
     // character o represents algorithm 1
     char alg = 'o';
     find_playable_positions(board, rules, alg, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
 
-    if(must_jump('o', 'O', board, bd, rules, player1, player2)){
+    if(must_jump('o', 'O', board, bd, rules, player1, player2, output)){
 
          return;
 
@@ -148,7 +160,7 @@ void algorithm1(vector <vector<char>>& board, Board& bd, Rules rules, int& playe
                             rules.make_king(row2,col2,board);
                 }
 
-            cout << "p1 " << one_dimension_initial.at(position)<< "-" << one_dimension_destination.at(position)<< endl;
+            output << "p1 " << one_dimension_initial.at(position)<< "-" << one_dimension_destination.at(position)<< endl;
 
     }else{
                 // if the previous conditions fails, then it is a draw since this one cannot move.
@@ -177,13 +189,13 @@ void algorithm1(vector <vector<char>>& board, Board& bd, Rules rules, int& playe
 
 
 
-void algorithm2(vector <vector<char>>&board, Board& bd, Rules rules, int& player1, int& player2){
+void algorithm2(vector <vector<char>>&board, Board& bd, Rules rules, int& player1, int& player2, ofstream& output){
 
     vector <int> initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination;
     // character x represents algorithm 2 always
     char alg = 'x';
     find_playable_positions(board, rules, alg, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
-    if(must_jump('x', 'X', board, bd, rules, player1, player2)){
+    if(must_jump('x', 'X', board, bd, rules, player1, player2, output)){
 
                 return;
 
@@ -233,7 +245,7 @@ void algorithm2(vector <vector<char>>&board, Board& bd, Rules rules, int& player
                             rules.make_king(row2,col2,board);
                 }
 
-            cout << "p2 " << one_dimension_initial.at(position)<< "-" << one_dimension_destination.at(position)<< endl;
+            output << "p2 " << one_dimension_initial.at(position)<< "-" << one_dimension_destination.at(position)<< endl;
             }
 
             else{
@@ -255,7 +267,7 @@ void algorithm2(vector <vector<char>>&board, Board& bd, Rules rules, int& player
 
 
 
-bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd, Rules rules, int& player1, int& player2){
+bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd, Rules rules, int& player1, int& player2, ofstream& output){
 
 
     //play a forced jump move if there is move
@@ -266,9 +278,9 @@ bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd
                     while(rules.is_jumping(a,b,board,player1,player2)){
 
                             if(plyr == 'o' && jumps == 0){
-                                cout << "p1 ";
+                                output << "p1 ";
                             }else if (plyr == 'x' && jumps == 0){
-                                cout << "p2 ";
+                                output << "p2 ";
                             }
 
                                 int jumped_row = (a+i)/2;
@@ -278,7 +290,7 @@ bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd
                                 int jumped = jumped_row*(board.size()/2) + ceil(jumped_col/2) +1;
                                 int destination = a*(board.size()/2) + ceil(b/2) +1;
 
-                                cout << initial << "x" << destination << "(" << jumped<< ")";
+                                output << initial << "x" << destination << "(" << jumped<< ")";
 
 
                         if(rules.is_on_boundaries(a,b,board))
@@ -287,7 +299,7 @@ bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd
 
                     }
                 if(jumps>0){
-                   cout << endl;
+                   output << endl;
                    return true;
 
                 }

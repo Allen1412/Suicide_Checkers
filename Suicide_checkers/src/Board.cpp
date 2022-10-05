@@ -10,9 +10,10 @@ Board::Board()
 Board::Board(int sz, int& player1, int& player2)
 {
     // Board size must always be an even number that ranges from 6 to 12.
-    if (sz %2 == 0 && sz>=6 && sz <=12){
+    if ( (sz%2) == 0 && sz>=6 && sz <=12){
         board_size = sz;
-    }
+    } else
+        return;
     // 0 indicates that the game is playing
     game_finished_value = 0;
 
@@ -25,6 +26,7 @@ Board::Board(int sz, int& player1, int& player2)
 Board::~Board()
 {
     //dtor
+
 }
 
 void Board::initialize_board(vector <vector <char>> &board){
@@ -57,18 +59,6 @@ for (int i = 0; i < board_size; i++){
 
 }
 
-
-
-void Board::print_board(vector <vector <char>> &board){
-
-    for (int i = 0; i< board_size; i++){
-        for (int j = 0; j< board_size; j++){
-
-            cout << board[i][j] << " ";
-        }
-        cout << endl;
-    }
-}
 
 int Board::game_finished_state(){
     return game_finished_value;

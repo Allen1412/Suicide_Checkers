@@ -53,7 +53,6 @@ Rules::~Rules()
                     board[row-2][col-2] = 'x';
                     row_main = row-2;
                     col_main  = col-2;
-                    //is_jumping(row_main, col_main, board, player1, player2);
                     return true;
                 }
      } else if(plyr == 'o'){
@@ -68,7 +67,6 @@ Rules::~Rules()
                     col_main  = col+2;
                     row = row_main;
                     col = col_main;
-                    //is_jumping(row_main, col_main, board, player1, player2);
 
                     return true;
                 }
@@ -80,7 +78,6 @@ Rules::~Rules()
                         board[row+2][col-2] = 'o';
                         row_main = row+2;
                         col_main  = col-2;
-                        //is_jumping(row_main, col_main, board, player1, player2);
                         return true;
                     }
 
@@ -93,7 +90,6 @@ Rules::~Rules()
 
          if(!is_forbidden(row-1, col+1, board)&& !is_forbidden(row-2, col+2, board) && board[row-2][col+2] == '#'){
 
-    cout << "here 1 " << endl;
                     if (plyr == 'X' && (board[row-1][col+1] == 'o' || board[row-1][col+1] == 'O')){
                          board[row][col] = '#';
                          player1--;
@@ -117,7 +113,7 @@ Rules::~Rules()
          }
 
         else if (!is_forbidden(row-1, col-1, board)&& !is_forbidden(row-2, col-2, board) && board[row-2][col-2] == '#'){
-    cout << "here 2 " << endl;
+
                     if (plyr == 'X' && (board[row-1][col-1] == 'o' || board[row-1][col-1] == 'O')){
 
                          board[row][col] = '#';
@@ -130,7 +126,7 @@ Rules::~Rules()
                     }else if (plyr == 'O' && (board[row-1][col-1] == 'x' || board[row-1][col-1] == 'X')){
                          board[row][col] = '#';
                          player2--;
-                         board[row-1][col-11] = '#';
+                         board[row-1][col-1] = '#';
                          board[row-2][col-2] = 'O';
                          row_main = row-2;
                          col_main  = col-2;
@@ -152,7 +148,7 @@ Rules::~Rules()
                                                      row_main = row+2;
                                                      col_main  = col+2;
                                                      return true;
-                                                }else if (plyr == 'O' && (board[row-1][col+1] == 'x' || board[row+1][col+1] == 'X')){
+                                                }else if (plyr == 'O' && (board[row+1][col+1] == 'x' || board[row+1][col+1] == 'X')){
                                                      board[row][col] = '#';
                                                      player2--;
                                                      board[row+1][col+1] = '#';
@@ -224,14 +220,30 @@ bool Rules::is_king(int row, int col, vector<vector<char>> board){
     return false;
 }
 
-bool Rules::is_diagonal_up(int row1, int col1, int row2, int col2, vector<vector<char>> board){
-    if(!is_forbidden(row2, col2, board) && row2 == row1+1 && (col2 == col1+1 || col2 == col1-1))
+
+bool Rules::can_move_left_up_diagonally(int row, int col,vector<vector<char>> board){
+
+    if(!is_forbidden(row, col, board) && !is_forbidden(row-1, col-1, board) && board[row - 1][col-1] == '#')
         return true;
 
     return false;
 }
-bool Rules::is_diagonal_down(int row1, int col1, int row2, int col2, vector<vector<char>> board){
-    if(!is_forbidden(row2, col2, board) && row2 == row1-1 && (col2 == col1+1 || col2 == col1-1))
+bool Rules::can_move_left_down_diagonally(int row, int col,vector<vector<char>> board){
+if(!is_forbidden(row, col, board) && !is_forbidden(row+1, col-1, board) && board[row + 1][col-1] == '#')
+        return true;
+
+    return false;
+
+}
+bool Rules::can_move_right_up_diagonally(int row, int col,vector<vector<char>> board){
+if(!is_forbidden(row, col, board) && !is_forbidden(row-1, col+1, board) && board[row - 1][col+1] == '#')
+        return true;
+
+    return false;
+
+}
+bool Rules::can_move_right_down_diagonally(int row, int col,vector<vector<char>> board){
+if(!is_forbidden(row, col, board) && !is_forbidden(row+1, col+1, board) && board[row + 1][col+1] == '#')
         return true;
 
     return false;

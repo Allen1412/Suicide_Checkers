@@ -5,7 +5,6 @@
 #ifndef BOARD_H
 #define BOARD_H
 #include <vector> // This allows us to use vectors, since the board is a 2D vector.
-#include <iostream> /**************REMOVE*****************/
 
 using namespace std;
 
@@ -15,7 +14,6 @@ class Board
         Board();
         Board(int, int&, int&);// To initialise player1, player2 and
         ~Board();
-        void print_board(vector <vector <char>>&);/****REMOVE***/
         void initialize_board(vector <vector <char>>&);
         int game_finished_state();// Returns the game_finished value for a draw, win or continuing state
         void update_game(int);// updates game_finished_value

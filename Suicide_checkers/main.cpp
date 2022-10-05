@@ -3,30 +3,49 @@
 #include <iostream>
 #include "Board.h"
 #include "Rules.h"
+#include <cmath>
+#include <cstdlib>
+#include <fstream>
 
 using namespace std;
 
-void algorithm1(vector <vector<char>>& board, Board bd, Rules rules, int& player1, int& player2);
-void algorithm2(vector <vector<char>>& board, Board bd, Rules rules, int& player1, int& player2);
+// Random algorithm
+void algorithm1(vector <vector<char>>& board, Board& bd, Rules rules, int& player1, int& player2);
+//Non-random algorithm
+void algorithm2(vector <vector<char>>& board, Board& bd, Rules rules, int& player1, int& player2);
+// Function that forces a jump
 bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd, Rules rules, int& player1, int& player2);
+//Function that updates game variables
 void make_update(vector <vector<char>>& board, Board& bd, Rules& rules, int player1, int player2);
+//Function to find playable positions for either algorithm indicated by the character o for algorithm 1 and x for algorithm 2
+void find_playable_positions(vector<vector<char>>&, Rules rules, char alg, vector <int>&, vector <int>&, vector <int>&, vector <int>&, vector <int>&, vector <int>&);
+void fill_positions(int i, int j, int i_, int j_, int initial,int destination ,vector <int>&, vector <int>&, vector <int>&, vector <int>&, vector <int>&, vector <int>&);
+
+
+
+
+
 
 int main()
 {
     vector <vector <char>> board;
-    int sz = 6, player1, player2;
+    // Important coordinates tables
+    int sz , player1, player2, counter;
+
+
+
+    while (cin >> sz){
+
 
     Board bd (sz, player1, player2);
     Rules rules;
-
+    counter = 0;
     bd.initialize_board(board);
-    bd.print_board(board);
-    int i = 0;
 
-    while (bd.game_finished_state() == 0){
+     while (bd.game_finished_state() == 0){
 
         //play in alternating turns
-        if (i%2 == 0){
+        if (counter %2 == 0){
             algorithm1(board, bd, rules, player1, player2);
             make_update(board, bd, rules, player1, player2);
 
@@ -37,20 +56,36 @@ int main()
 
             }
 
-            cout << "we done yet? :" << bd.game_finished_state() << endl;
-
         if (bd.game_finished_state() == 1)
-       {
-           cout << "player 1 wins" << endl;
-           break;
-       }
-    else if(bd.game_finished_state() == 2)
         {
-            cout << "player 2 wins" << endl;
-            break;
+           cout << "tp1 " << player1 << endl;
+           cout << "tp2 " << player2 <<endl;
+           cout << "wp1" << endl << endl;
+           board.clear();
+           break;
+        }
+        else if(bd.game_finished_state() == 2)
+        {
+           cout << "tp1 " << player1 << endl;
+           cout << "tp2 " << player2 <<endl;
+           cout << "wp2" << endl << endl;
+           board.clear();
+           break;
+        }
+        else if (bd.game_finished_state() == 3){
+
+           cout << "tp1 " << player1 << endl;
+           cout << "tp2 " << player2 <<endl;
+           cout << "d" << endl << endl;
+           board.clear();
+           break;
         }
 
-        i++;
+        counter++;
+    }
+
+
+
     }
 
 
@@ -59,63 +94,159 @@ int main()
 }
 
 
-void algorithm1(vector <vector<char>>& board, Board bd, Rules rules, int& player1, int& player2){
 
-    if(must_jump('o', 'O', board, bd, rules, player1, player2))
-        return;
-    int row1, col1, row2,col2;
-    cout << "o initial row position:" << endl;
-    cin >> row1;
-    cout << "o initial col position:" << endl;
-    cin >> col1;
 
-    cout << "o destination row position:" << endl;
-    cin >> row2;
-    cout << "o destination col position:" << endl;
-    cin >> col2;
 
-    if(board[row1][col1] == 'o')
-    {
-        board[row1][col1] = '#';
-        board[row2][col2] = 'o';
-        }
-     else  if(board[row1][col1] == 'O')
-    {
-        board[row1][col1] = '#';
-        board[row2][col2] = 'O';
-        }
 
-    bd.print_board(board);
-    cout << endl;
+
+
+
+
+
+
+
+
+
+
+
+
+void algorithm1(vector <vector<char>>& board, Board& bd, Rules rules, int& player1, int& player2){
+
+    vector <int> initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination;
+    // character o represents algorithm 1
+    char alg = 'o';
+    find_playable_positions(board, rules, alg, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+
+    if(must_jump('o', 'O', board, bd, rules, player1, player2)){
+
+         return;
+
+    } else if(one_dimension_initial.size() >0){
+
+            // Randomness
+            srand(time(0));
+            int position = (rand()%one_dimension_initial.size());
+
+
+            // random initial position
+            int row1 = initial_rows.at(position), col1 = initial_cols.at(position);
+            // random destination position
+            int row2 = destination_rows.at(position),col2 = destination_cols.at(position);
+
+            if(board[row1][col1] == 'o')
+            {
+                board[row1][col1] = '#';
+                board[row2][col2] = 'o';
+                if(rules.is_on_boundaries(row2,col2,board))
+                            rules.make_king(row2,col2,board);
+                }
+             else  if(board[row1][col1] == 'O')
+            {
+                board[row1][col1] = '#';
+                board[row2][col2] = 'O';
+                if(rules.is_on_boundaries(row2,col2,board))
+                            rules.make_king(row2,col2,board);
+                }
+
+            cout << "p1 " << one_dimension_initial.at(position)<< "-" << one_dimension_destination.at(position)<< endl;
+
+    }else{
+                // if the previous conditions fails, then it is a draw since this one cannot move.
+                bd.update_game(3);
+            }
+
+
+        initial_rows.clear();
+        initial_cols.clear();
+        destination_rows.clear();
+        destination_cols.clear();
+        one_dimension_initial.clear();
+        one_dimension_destination.clear();
 
 }
-void algorithm2(vector <vector<char>>&board, Board bd, Rules rules, int& player1, int& player2){
 
-    if(must_jump('x', 'X', board, bd, rules, player1, player2))
-        return;
-    int row1, col1, row2,col2;
-    cout << "x initial row position:" << endl;
-    cin >> row1;
-    cout << "x initial col position:" << endl;
-    cin >> col1;
 
-    cout << "x destination row position:" << endl;
-    cin >> row2;
-    cout << "x destination col position:" << endl;
-    cin >> col2;
 
-    if(board[row1][col1] == 'x')
-    {
-        board[row1][col1] = '#';
-        board[row2][col2] = 'x';
-        }
-     else  if(board[row1][col1] == 'X')
-    {
-        board[row1][col1] = '#';
-        board[row2][col2] = 'X';
-        }
-    bd.print_board(board);
-    cout << endl;
+
+
+
+
+
+
+
+
+
+
+void algorithm2(vector <vector<char>>&board, Board& bd, Rules rules, int& player1, int& player2){
+
+    vector <int> initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination;
+    // character x represents algorithm 2 always
+    char alg = 'x';
+    find_playable_positions(board, rules, alg, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+    if(must_jump('x', 'X', board, bd, rules, player1, player2)){
+
+                return;
+
+    }else if (one_dimension_destination.size() > 0){
+
+
+
+            int diff = 100, temp1 = 100, temp2 = 100, position = 100;
+
+            // every possible destination column position is compared with the boundaries so that the nearest is chosen
+            for (int i = 0; i < one_dimension_initial.size(); i++){
+
+
+
+                temp1 = destination_rows.at(i) - 0;
+                temp2 = (one_dimension_initial.size() -1 ) - destination_rows.at(i);
+
+                if((temp1<=temp2) && (temp1 <= diff)){
+                    diff = temp1;
+                    position = i;
+                }else if ((temp2<=temp1) && (temp2 <= diff)){
+                    diff = temp1;
+                    position = i;
+                }
+
+            }
+
+            //initial coordinates
+            int row1 = initial_rows.at(position), col1 = initial_cols.at(position);
+
+
+            //final coordinates
+            int row2 = destination_rows.at(position),col2 = destination_cols.at(position);
+
+            if(board[row1][col1] == 'x')
+            {
+                board[row1][col1] = '#';
+                board[row2][col2] = 'x';
+                if(rules.is_on_boundaries(row2,col2,board))
+                            rules.make_king(row2,col2,board);
+                }
+             else  if(board[row1][col1] == 'X')
+            {
+                board[row1][col1] = '#';
+                board[row2][col2] = 'X';
+                if(rules.is_on_boundaries(row2,col2,board))
+                            rules.make_king(row2,col2,board);
+                }
+
+            cout << "p2 " << one_dimension_initial.at(position)<< "-" << one_dimension_destination.at(position)<< endl;
+            }
+
+            else{
+                // if the previous conditions fails, then it is a draw since this one cannot move.
+                bd.update_game(3);
+            }
+
+            initial_rows.clear();
+            initial_cols.clear();
+            destination_rows.clear();
+            destination_cols.clear();
+            one_dimension_initial.clear();
+            one_dimension_destination.clear();
 
 }
 
@@ -134,13 +265,28 @@ bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd
                     int a = i, b =j, jumps = 0;
                     while(rules.is_jumping(a,b,board,player1,player2)){
 
+                            if(plyr == 'o' && jumps == 0){
+                                cout << "p1 ";
+                            }else if (plyr == 'x' && jumps == 0){
+                                cout << "p2 ";
+                            }
+
+                                int jumped_row = (a+i)/2;
+                                int jumped_col = (b+j)/2;
+
+                                int initial = i*(board.size()/2) + ceil(j/2) +1;
+                                int jumped = jumped_row*(board.size()/2) + ceil(jumped_col/2) +1;
+                                int destination = a*(board.size()/2) + ceil(b/2) +1;
+
+                                cout << initial << "x" << destination << "(" << jumped<< ")";
+
+
                         if(rules.is_on_boundaries(a,b,board))
                             rules.make_king(a,b,board);
                                 jumps++;
 
                     }
                 if(jumps>0){
-                   bd.print_board(board);
                    cout << endl;
                    return true;
 
@@ -153,6 +299,11 @@ bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd
 }
 
 
+
+
+
+
+
 void make_update(vector <vector<char>>& board, Board& bd, Rules& rules, int player1, int player2){
 
     if(player1 == 0)
@@ -161,4 +312,150 @@ void make_update(vector <vector<char>>& board, Board& bd, Rules& rules, int play
         bd.update_game(2);
 
 }
+
+
+
+
+
+
+
+void find_playable_positions(vector<vector<char>>& board,Rules rules,char alg, vector <int>& initial_rows, vector <int>& initial_cols, vector <int>& destination_rows, vector <int>& destination_cols, vector <int>& one_dimension_initial, vector <int>& one_dimension_destination)
+
+{
+       int initial = 0;
+       int destination = 0;
+       int quotient = board.size()/2;
+
+       for (int i=0; i<board.size(); i++){
+            for (int j = 0; j < board.size(); j++){
+
+                if(alg == 'x'){
+
+                    if (board[i][j] == 'x'){
+
+                        if(rules.can_move_left_up_diagonally(i, j, board)){
+
+                            initial = i*quotient + ceil(j/2) +1;
+                            destination = (i-1)*quotient + ceil((j-1)/2) +1;
+                            fill_positions(i, j, i-1, j-1, initial, destination, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+                        }
+
+                        if(rules.can_move_right_up_diagonally(i, j, board)){
+
+                            initial = i*quotient + ceil(j/2) +1;
+                            destination = (i-1)*quotient + ceil((j+1)/2) +1;
+                            fill_positions(i, j, i-1, j+1, initial, destination, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+                        }
+
+                    }
+
+                    if (board[i][j] == 'X'){
+
+                        if(rules.can_move_left_up_diagonally(i, j, board)){
+
+                            initial = i*quotient + ceil(j/2) +1;
+                            destination = (i-1)*quotient + ceil((j-1)/2) +1;
+                            fill_positions(i, j, i-1, j-1, initial, destination, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+                        }
+
+                        if(rules.can_move_right_up_diagonally(i, j, board)){
+
+                            initial = i*quotient + ceil(j/2) +1;
+                            destination = (i-1)*quotient + ceil((j+1)/2) +1;
+                            fill_positions(i, j, i-1, j+1, initial, destination, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+                        }
+
+                        if(rules.can_move_left_down_diagonally(i, j, board)){
+
+                            initial = i*quotient + ceil(j/2) +1;
+                            destination = (i+1)*quotient + ceil((j-1)/2) +1;
+                            fill_positions(i, j, i+1, j-1, initial, destination, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+                        }
+
+                        if(rules.can_move_right_down_diagonally(i, j, board)){
+
+                            initial = i*quotient + ceil(j/2) +1;
+                            destination = (i+1)*quotient + ceil((j+1)/2) +1;
+                            fill_positions(i, j, i+1, j+1, initial, destination, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+                        }
+                    }
+
+                }else if (alg == 'o'){
+
+                        if(board[i][j]== 'o'){
+
+                            if(rules.can_move_left_down_diagonally(i, j, board)){
+
+                            initial = i*quotient + ceil(j/2) +1;
+                            destination = (i+1)*quotient + ceil((j-1)/2) +1;
+                            fill_positions(i, j, i+1, j-1, initial, destination, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+                          }
+
+                            if(rules.can_move_right_down_diagonally(i, j, board)){
+
+                            initial = i*quotient + ceil(j/2) +1;
+                            destination = (i+1)*quotient + ceil((j+1)/2) +1;
+                            fill_positions(i, j, i+1, j+1, initial, destination, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+                             }
+
+
+                        }
+
+                        if(board[i][j] == 'O'){
+
+
+                                if(rules.can_move_left_up_diagonally(i, j, board)){
+
+                            initial = i*quotient + ceil(j/2) +1;
+                            destination = (i-1)*quotient + ceil((j-1)/2) +1;
+                            fill_positions(i, j, i-1, j-1, initial, destination, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+                                   }
+
+
+                                   if(rules.can_move_right_up_diagonally(i, j, board)){
+
+                            initial = i*quotient + ceil(j/2) +1;
+                            destination = (i-1)*quotient + ceil((j+1)/2) +1;
+                            fill_positions(i, j, i-1, j+1, initial, destination, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+                                      }
+
+
+                                    if(rules.can_move_left_down_diagonally(i, j, board)){
+
+                            initial = i*quotient + ceil(j/2) +1;
+                            destination = (i+1)*quotient + ceil((j-1)/2) +1;
+                            fill_positions(i, j, i+1, j-1, initial, destination, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+                                  }
+
+                                  if(rules.can_move_right_down_diagonally(i, j, board)){
+
+                            initial = i*quotient + ceil(j/2) +1;
+                            destination = (i+1)*quotient + ceil((j+1)/2) +1;
+                            fill_positions(i, j, i+1, j+1, initial, destination, initial_rows, initial_cols, destination_rows, destination_cols, one_dimension_initial, one_dimension_destination);
+                                     }
+
+                        }
+
+
+                }
+            }
+       }
+
+
+}
+
+
+
+
+void fill_positions(int i, int j, int i_, int j_,int initial, int destination,vector <int>& initial_rows, vector <int>& initial_cols, vector <int>& destination_rows, vector <int>& destination_cols, vector <int>& one_dimension_initial, vector <int>& one_dimension_destination){
+
+                        initial_rows.push_back(i);
+                        initial_cols.push_back(j);
+                        destination_rows.push_back(i_);
+                        destination_cols.push_back(j_);
+                        one_dimension_initial.push_back(initial);
+                        one_dimension_destination.push_back(destination);
+
+}
+
 

@@ -1,13 +1,21 @@
 # depslib dependency file v1.0
-1664268568 source:c:\users\phetolo\desktop\eie_2022\software_tender_git\suicide_checkers\main.cpp
-	<iostream>
+1664975835 source:c:\users\phetolo\desktop\eie_2022\software_tender_git\suicide_checkers\main.cpp
 	"Board.h"
+	"Rules.h"
+	<cmath>
+	<cstdlib>
+	<fstream>
+	<iostream>
 
-1664229276 c:\users\phetolo\desktop\eie_2022\software_tender_git\suicide_checkers\include\board.h
+1664953217 c:\users\phetolo\desktop\eie_2022\software_tender_git\suicide_checkers\include\board.h
 	<vector>
-	<iostream>
-	<iostream>
 
-1664268122 source:c:\users\phetolo\desktop\eie_2022\software_tender_git\suicide_checkers\src\board.cpp
+1664952226 source:c:\users\phetolo\desktop\eie_2022\software_tender_git\suicide_checkers\src\board.cpp
 	"Board.h"
+
+1664952226 source:c:\users\phetolo\desktop\eie_2022\software_tender_git\suicide_checkers\src\rules.cpp
+	"Rules.h"
+
+1664952226 c:\users\phetolo\desktop\eie_2022\software_tender_git\suicide_checkers\include\rules.h
+	<vector>
 

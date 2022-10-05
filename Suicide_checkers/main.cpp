@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <fstream>
 
+
 using namespace std;
 
 // Random algorithm
@@ -20,12 +21,7 @@ void make_update(vector <vector<char>>& board, Board& bd, Rules& rules, int play
 void find_playable_positions(vector<vector<char>>&, Rules rules, char alg, vector <int>&, vector <int>&, vector <int>&, vector <int>&, vector <int>&, vector <int>&);
 void fill_positions(int i, int j, int i_, int j_, int initial,int destination ,vector <int>&, vector <int>&, vector <int>&, vector <int>&, vector <int>&, vector <int>&);
 
-
-
-
-
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main()
 {
@@ -33,10 +29,12 @@ int main()
     // Important coordinates tables
     int sz , player1, player2, counter;
 
+    int plyr1_wins = 0, plyr2_wins = 0, draws =0;
+
     // board sizes will be read from a text file called input.txt
     ifstream input("input.txt");
 
-    ofstream output("output.txt");
+    ofstream output("results.txt");
 
 
     if(input.is_open()){
@@ -47,7 +45,7 @@ int main()
                             output << sz << endl;
                             Board bd (sz, player1, player2);
                             Rules rules;
-                            counter = 0;
+                            counter = 2; // 1 for player 1 and 2 for player 2
                             bd.initialize_board(board);
 
                              while (bd.game_finished_state() == 0){
@@ -69,6 +67,7 @@ int main()
                                    output << "tp1 " << player1 << endl;
                                    output << "tp2 " << player2 <<endl;
                                    output << "wp1" << endl << endl;
+                                   plyr1_wins++;
                                    board.clear();
                                    break;
                                 }
@@ -77,6 +76,7 @@ int main()
                                    output << "tp1 " << player1 << endl;
                                    output << "tp2 " << player2 <<endl;
                                    output << "wp2" << endl << endl;
+                                   plyr2_wins++;
                                    board.clear();
                                    break;
                                 }
@@ -85,15 +85,13 @@ int main()
                                    output << "tp1 " << player1 << endl;
                                    output << "tp2 " << player2 <<endl;
                                    output << "d" << endl << endl;
+                                   draws++;
                                    board.clear();
                                    break;
                                 }
 
                                 counter++;
                             }
-
-
-
                             }
 
        // Safely closing files
@@ -101,7 +99,6 @@ int main()
         output.close();
 
     }
-
     return 0;
 }
 
@@ -275,7 +272,8 @@ bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd
         for (int j=0; j < board.size(); j++){
             if(board[i][j] == plyr || board[i][j] == plyr_king){
                     int a = i, b =j, jumps = 0;
-                    while(rules.is_jumping(a,b,board,player1,player2)){
+                    int c = a, d = b;
+                    while(rules.is_jumping(c,d,board,player1,player2)){
 
                             if(plyr == 'o' && jumps == 0){
                                 output << "p1 ";
@@ -283,14 +281,16 @@ bool must_jump(char plyr, char plyr_king, vector <vector<char>>& board, Board bd
                                 output << "p2 ";
                             }
 
-                                int jumped_row = (a+i)/2;
-                                int jumped_col = (b+j)/2;
+                                int jumped_row = (c+a)/2;
+                                int jumped_col = (d+b)/2;
 
-                                int initial = i*(board.size()/2) + ceil(j/2) +1;
+                                int initial = a*(board.size()/2) + ceil(b/2) +1;
                                 int jumped = jumped_row*(board.size()/2) + ceil(jumped_col/2) +1;
-                                int destination = a*(board.size()/2) + ceil(b/2) +1;
+                                int destination = c*(board.size()/2) + ceil(d/2) +1;
 
                                 output << initial << "x" << destination << "(" << jumped<< ")";
+
+                                a = c, b = d;
 
 
                         if(rules.is_on_boundaries(a,b,board))

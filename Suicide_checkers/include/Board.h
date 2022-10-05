@@ -22,7 +22,7 @@ class Board
 
     private:
         int board_size;
-        int game_finished_value;/// 0 when the game is playing, 1 if player1 wins, 2 if player2 wins, and 3 for a draw
+        int game_finished_value;// 0 when the game is playing, 1 if player1 wins, 2 if player2 wins, and 3 for a draw
 
 
 };

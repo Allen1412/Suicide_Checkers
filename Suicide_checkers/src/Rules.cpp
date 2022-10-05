@@ -126,7 +126,7 @@ Rules::~Rules()
                     }else if (plyr == 'O' && (board[row-1][col-1] == 'x' || board[row-1][col-1] == 'X')){
                          board[row][col] = '#';
                          player2--;
-                         board[row-1][col-11] = '#';
+                         board[row-1][col-1] = '#';
                          board[row-2][col-2] = 'O';
                          row_main = row-2;
                          col_main  = col-2;
@@ -148,7 +148,7 @@ Rules::~Rules()
                                                      row_main = row+2;
                                                      col_main  = col+2;
                                                      return true;
-                                                }else if (plyr == 'O' && (board[row-1][col+1] == 'x' || board[row+1][col+1] == 'X')){
+                                                }else if (plyr == 'O' && (board[row+1][col+1] == 'x' || board[row+1][col+1] == 'X')){
                                                      board[row][col] = '#';
                                                      player2--;
                                                      board[row+1][col+1] = '#';

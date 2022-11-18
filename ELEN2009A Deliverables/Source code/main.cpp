@@ -5,9 +5,10 @@
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
-#include <ctime>
+
 
 using namespace std;
+
 // Random algorithm
 void algorithm1(vector <vector<char>>& board, Board& bd, Rules rules, int& player1, int& player2, ofstream& output);
 //Non-random algorithm

@@ -12,7 +12,7 @@ class Board
 {
     public:
         Board();
-        Board(int, int&, int&);// To initialise player1, player2 and board size
+        Board(int, int&, int&);// To initialise player1, player2 and
         ~Board();
         void initialize_board(vector <vector <char>>&);
         int game_finished_state();// Returns the game_finished value for a draw, win or continuing state
